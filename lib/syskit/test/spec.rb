@@ -28,8 +28,8 @@ module Syskit
                 Syskit.conf.remove_process_server('stubs')
             end
 
-            # Override the task model that should by default in tests such as
-            # {#is_configurable}. This is used mainly in case the task model
+            # Override the task model that should by default in tests when not
+            # specifying the model. This is used mainly in case the task model
             # under test is abstract
             def self.use_syskit_model(model)
                 @subject_syskit_model = model
@@ -57,8 +57,10 @@ module Syskit
 
             # Create a stub driver model
             #
-            # @param [String] dev_name the name of the created device
-            # @return [Syskit::Component] the device driver task
+            # @param [Device] dev_m the device model
+            # @param [Hash] options options that should be passed to
+            #   {Robot::RobotDefinition#device} when creating the device
+            # @return [Model<Syskit::Component>] the device driver model
             def syskit_stub_driver_model(dev_m, options = Hash.new)
                 robot = Syskit::Robot::RobotDefinition.new
                 device = robot.device(dev_m, options)

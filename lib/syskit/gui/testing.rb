@@ -557,7 +557,7 @@ module Syskit
 
             # Register a PID-to-slave mapping
             #
-            # @param [Autorespawn::Slave] slave the slave, whose {#pid}
+            # @param [Autorespawn::Slave] slave the slave, whose #pid
             #   attribute is expected to be set appropriately
             def register_slave_pid(slave)
                 item = item_from_slave(slave)

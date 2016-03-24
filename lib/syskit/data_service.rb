@@ -151,7 +151,7 @@ module Syskit
             # Enumerates all the devices that are attached to the underlying
             # communication busses, regardless of whether a corresponding
             # {Syskit::Component} instance has been associated with self using
-            # {attach}
+            # {#attach}
             #
             # @yieldparam device [DeviceInstance] a device that is using self as
             #   a communication bus
@@ -167,7 +167,7 @@ module Syskit
 
             # Enumerates all the devices that are attached to this communication
             # bus for which a corresponding {Syskit::Component} instance has
-            # been attached to self using {attach}
+            # been attached to self using {#attach}
             #
             # @yieldparam device [DeviceInstance] a device that is using self as
             #   a communication bus

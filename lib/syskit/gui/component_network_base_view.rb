@@ -19,9 +19,10 @@ module Syskit
             #
             # @param [String] namespace the button namespace, i.e. a string that
             #   is prefixed before the button ID. The final button ID is
-            #   #{namespace}/annotations/#{annotation_name}
-            # @param [Array<String>] the list of annotations
-            # @param [Set<String>] the set of annotations that are initially shown
+            #   $(namespace)/annotations/$(annotation_name)
+            # @param [Array<String>] annotations the list of annotations
+            # @param [#include?] defaults the list of annotations that should be
+            #   enabled by default
             def self.make_annotation_buttons(namespace, annotations, defaults)
                 annotations.sort.map do |ann_name|
                     Button.new("#{namespace}/annotations/#{ann_name}",
@@ -35,7 +36,7 @@ module Syskit
             #
             # @param [String] namespace the button namespace, i.e. a string that
             #   is prefixed before the button ID. The final button ID are
-            #   #{namespace}/#{button_name} (e.g. #{namespace}/zoom)
+            #   $(namespace)/$(button_name) (e.g. $(namespace)/zoom)
             def self.common_graph_buttons(namespace)
                 [Button.new("#{namespace}/zoom", text: "Zoom +"),
                  Button.new("#{namespace}/unzoom", text: "Zoom -"),
@@ -47,8 +48,8 @@ module Syskit
             #
             # @param [String] namespace the button namespace, i.e. a string that
             #   is prefixed before the button ID. The final button ID is
-            #   #{namespace}/annotations/#{annotation_name}
-            # @param [Set<String>] the set of annotations that are initially shown
+            #   $(namespace)/annotations/$(annotation_name)
+            # @param [Set<String>] defaults the set of annotations that are initially shown
             #
             # @see Graphviz.available_task_annotations
             def self.task_annotation_buttons(namespace, defaults)
@@ -61,8 +62,8 @@ module Syskit
             #
             # @param [String] namespace the button namespace, i.e. a string that
             #   is prefixed before the button ID. The final button ID is
-            #   #{namespace}/annotations/#{annotation_name}
-            # @param [Set<String>] the set of annotations that are initially shown
+            #   $(namespace)/annotations/$(annotation_name)
+            # @param [Set<String>] defaults the set of annotations that are initially shown
             #
             # @see Graphviz.available_graph_annotations
             def self.graph_annotation_buttons(namespace, defaults)
@@ -233,8 +234,8 @@ module Syskit
 
             # Render the snippet that represents the definition place of a model
             #
-            # @param [#push] the page on which the HTML should be pushed
-            # @param [Model<Component>] the model
+            # @param [#push] page the page on which the HTML should be pushed
+            # @param [Model<Component>] model the model
             # @param [Boolean] with_require whether a require '...' line
             #   should be rendered as well
             # @param definition_location the model's definition location. If

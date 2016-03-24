@@ -140,7 +140,7 @@ module Syskit
 
             # Tests if this group matches the given port
             #
-            # @param [Syskit::OutputPort] the port that is being tested
+            # @param [Syskit::OutputPort] port the port that is being tested
             # @return [Boolean]
             def matches_port?(port)
                 if ports.include?(port.model)

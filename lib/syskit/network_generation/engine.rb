@@ -17,8 +17,6 @@ module Syskit
             # #plan
             #
             # This is valid only during resolution
-            #
-            # It is alised to {#plan} for backward compatibility reasons
             attr_reader :work_plan
             # A mapping from task context models to deployment models that
             # contain such a task.

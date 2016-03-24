@@ -149,13 +149,13 @@ module Syskit
                 end
             end
 
-            # Returns a view of this service as a provider of +service_model+
+            # Returns a view of this service as a provider of service_model
             #
-            # It allows to transparently apply port mappings as if +self+ was a
-            # service of type +service_model+
+            # It allows to transparently apply port mappings as if self was a
+            # service of type service_model
             #
             # The original state of self (before as was called) can be retrieved
-            # by calling {as_real_model} on the returned value
+            # by calling {#as_real_model} on the returned value
             #
             # @return [BoundDataService]
             def as(service_model)
@@ -172,7 +172,7 @@ module Syskit
             end
 
             # Returns the actual bound data service when the receiver is the
-            # return value of {as}
+            # return value of {#as}
             #
             # @return [BoundDataService]
             def as_real_model
@@ -285,10 +285,10 @@ module Syskit
                 bind(component_model.resolve(task))
             end
 
-            # Generates the InstanceRequirements object that represents +self+
+            # Generates the {InstanceRequirements} object that represents self
             # best
             #
-            # @return [Syskit::InstanceRequirements]
+            # @return [InstanceRequirements]
             def to_instance_requirements
                 req = component_model.to_instance_requirements
                 req.select_service(self)

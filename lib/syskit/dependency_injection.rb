@@ -223,7 +223,7 @@ module Syskit
             #
             # @param [String,nil] name the name that should be used for
             #   resolution, or nil if there is no name
-            # @param [InstanceRequirements,nil] the required models, or nil if
+            # @param [InstanceRequirements,nil] requirements the required models, or nil if
             #   none are specified
             # @return [InstanceSelection]
             # @raise (see #selection_for)

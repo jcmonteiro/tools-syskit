@@ -23,8 +23,8 @@ module Syskit
             # Wrapper on top of the createLoggingPort operation
             #
             # @param [String] sink_port_name the desired port name on the logger
-            # @param [TaskContext] the task context that is being logged
-            # @param [OutputPort] the port that is being logged
+            # @param [TaskContext] logged_task the task context that is being logged
+            # @param [OutputPort] logged_port the port that is being logged
             def create_logging_port(sink_port_name, logged_task, logged_port)
                 return if logged_ports.include?([sink_port_name, logged_port.type.name])
 

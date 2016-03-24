@@ -9,7 +9,7 @@ module Syskit
             # The target plan
             attr_reader :plan
 
-            # The {Roby::DRoby::EventLogger} used to log timings
+            # The Roby::DRoby::EventLogger used to log timings
             attr_reader :event_logger
 
             # The thread pool (or, really, any of Concurrent executor)

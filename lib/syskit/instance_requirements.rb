@@ -9,8 +9,8 @@ module Syskit
             # This requirement's name, mostly for debugging / display reasons
             # @return [String,nil]
             attr_accessor :name
-            # The component model narrowed down from {base_model} using
-            # {using_spec}
+            # The component model narrowed down from {#base_model} using
+            # {#resolved_dependency_injection}
             attr_reader :model
             # The component model specified by #add
             attr_reader :base_model
@@ -200,7 +200,7 @@ module Syskit
             # Explicitely selects a given service on the task models required by
             # this task
             #
-            # @param [Models::BoundDataService] the data service that should be
+            # @param [Models::BoundDataService] service the data service that should be
             #   selected
             # @raise [ArgumentError] if the provided service is not a service on
             #   a model in self (i.e. not a service of a component model in
@@ -263,7 +263,7 @@ module Syskit
 
             # Finds the only data service that matches the given service type
             #
-            # @param [Model<DataService>] the data service type
+            # @param [Model<DataService>] service_type the data service type
             # @return [InstanceRequirements,nil] this instance requirement object
             #   with the relevant service selected; nil if there are no matches
             # @raise [AmbiguousServiceSelection] if more than one service
@@ -535,7 +535,7 @@ module Syskit
 
             # Returns the simplest model representation for self
             #
-            # It basically checks if {plain?} returns true or false. If self is
+            # It basically checks if {#plain?} returns true or false. If self is
             # indeed plain, it returns the actual model class
             def simplest_model_representation
                 if plain?
@@ -591,7 +591,7 @@ module Syskit
             # deployed in the plan
             #
             # This can only be meaningfully used when injected for a
-            # composition's optional child (see {CompositionChild#optional})
+            # composition's optional child (see {Models::CompositionChild#optional})
             #
             # @return [self]
             def if_already_present
@@ -652,7 +652,7 @@ module Syskit
             # will be evaluated against each selector given through this method.
             # Only the ones that match at least one will be selected in the end
             #
-            # @param [{String=>Model<Component>}]
+            # @param [{String=>Model<Component>}] specialization_selectors
             # @return [self]
             def prefer_specializations(specialization_selectors)
                 if !composition_model?
@@ -833,7 +833,7 @@ module Syskit
             # Returns a plan pattern (main task and planning task) that will
             # deploy self
             #
-            # The main task is an instance of {model} and the planning task an
+            # The main task is an instance of {#model} and the planning task an
             # instance of {InstanceRequirementsTask}.
             #
             # @return [Syskit::Component]

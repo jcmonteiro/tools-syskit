@@ -234,8 +234,10 @@ module Syskit
             #
             # Helper for {#syskit_stub_and_deploy}
             #
-            # @param [InstanceRequirements] task_m the task context model
+            # @param [InstanceRequirements] model the task context model
             # @param [String] as the deployment name
+            # @param [Boolean] devices whether devices needed by the task should
+            #   be automatically stubbed as well
             def syskit_stub_task_context_requirements(model, as: syskit_default_stub_name(model), devices: true)
                 model = model.to_instance_requirements
 
@@ -285,7 +287,7 @@ module Syskit
 
             # @api private
             #
-            # Helper for {#syskit_stub_model}
+            # Helper for {#syskit_stub}
             #
             # @param [InstanceRequirements] model
             def syskit_stub_composition_requirements(model, recursive: true, as: syskit_default_stub_name(model), devices: true)
@@ -362,9 +364,6 @@ module Syskit
             # @param [Model<ComBus>,MasterDeviceInstance] bus either a bus model
             #   or a bus object
             # @param [String] as a name for the new device
-            # @param [Model<TaskContext>] driver the driver that should be used
-            #   for the device. If not given, syskit will look for a suitable
-            #   driver or stub one
             def syskit_stub_attached_device(bus, as: syskit_default_stub_name(bus))
                 if !bus.kind_of?(Robot::DeviceInstance)
                     bus = syskit_stub_com_bus(bus, as: "#{as}_bus")

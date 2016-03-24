@@ -11,11 +11,11 @@ module Syskit
         class FacetedAccess < InstanceSelection
             # The object to which we are giving a faceted access
             attr_reader :object
-            # @return [{String=>[Port]}] the ports on {required} that provide the
+            # @return [{String=>[Port]}] the ports on {#required} that provide the
             #   named port
             attr_reader :ports_on_required
-            # @return [{String=>Port}] mapping of ports in {required} to ports in
-            #   {object}
+            # @return [{String=>Port}] mapping of ports in {#required} to ports in
+            #   {#object}
             attr_reader :port_mappings
 
             def initialize(object, required, mappings = Hash.new)

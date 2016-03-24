@@ -51,9 +51,9 @@ module Syskit
 
                 # Called when a new sample has been received
                 #
-                # @param [Syskit::Models::OutputReader] the data stream on which
+                # @param [Syskit::Models::OutputReader] stream the data stream on which
                 #   the sample has been received
-                # @param [Object] the sample itself
+                # @param [Object] sample the sample itself
                 def call(stream, sample)
                     samples[stream_to_index[stream]] = sample
                     @new_sample = true

@@ -290,7 +290,7 @@ module Syskit
             end
 
             # Declare deployed versions of some Ruby tasks
-            def use_ruby_tasks(mappings)
+            def use_ruby_tasks(mappings, register: true)
                 mappings.map do |task_model, name|
                     deployment_model = task_model.deployment_model
                     configured_deployment = Models::ConfiguredDeployment.
@@ -302,7 +302,7 @@ module Syskit
 
             # Declare tasks that are going to be started by some other process,
             # but whose tasks are going to be integrated in the syskit network
-            def use_unmanaged_task(mappings)
+            def use_unmanaged_task(mappings, register: true)
                 mappings.map do |task_model, name|
                     if task_model.respond_to?(:to_str)
                         task_model_name = task_model
@@ -332,7 +332,7 @@ module Syskit
             #   server on which this deployment should be started
             #
             # @return [Array<Deployment>]
-            def use_deployment(*names, on: 'localhost', **run_options)
+            def use_deployment(*names, register: true, on: 'localhost', **run_options)
                 deployment_spec = Hash.new
                 if names.last.kind_of?(Hash)
                     deployment_spec = names.pop
@@ -586,7 +586,7 @@ module Syskit
             #
             # @param [String] name the process server name
             # @param [Object] client the process server client object, which has
-            #   to conform to the API of {Orocos::Remotes::Client}
+            #   to conform to the API of Orocos::Remotes::Client
             # @param [String] log_dir the path to the server's log directory
             # @return [ProcessServerConfig]
             def register_process_server(name, client, log_dir = nil)
@@ -642,7 +642,7 @@ module Syskit
 
             # Deregister deployments
             #
-            # @param [ConfiguredDeployment] the deployment to remove, as
+            # @param [ConfiguredDeployment] configured_deployment the deployment to remove, as
             #   returned by e.g. {#use_deployment}
             # @return [void]
             def deregister_configured_deployment(configured_deployment)

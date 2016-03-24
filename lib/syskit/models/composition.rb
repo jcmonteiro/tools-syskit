@@ -99,13 +99,14 @@ module Syskit
             # model graph up to this model
             attribute(:applied_specializations) { Set.new }
 
-            # Called by {Component.specialize} to create the composition model
+            # Called by {Component#specialize} to create the composition model
             # that will be used for a private specialization
             def create_private_specialization
                 new_submodel(:register_specializations => false)
             end
 
-            # (see SpecializationManager#specialize)
+            # @param (see SpecializationManager#specialize)
+            # @option (see SpecializationManager#specialize)
             def specialize(options = Hash.new, &block)
                 if options.respond_to?(:to_str)
                     return super(options)
@@ -895,17 +896,17 @@ module Syskit
             # It selects the relevant specialization and instantiates it instead
             # of +self+ when relevant.
             #
-            # @param [Roby::Plan] the plan in which the composition should be
+            # @param [Roby::Plan] plan the plan in which the composition should be
             #   instantiated
             # @param [DependencyInjectionContext] context the dependency
             #   injection used to select the actual models for the children (and
             #   therefore the specializations as well). The last element in this
             #   DIContext stack is interpreted as DI setup only for the
             #   composition (not for the instantiation of its children).
-            # @option arguments [Boolean] specialize (true) if true, a suitable
+            # @param [Boolean] specialize if true, a suitable
             #   specialization will be selected. Otherwise, the specialization
             #   resolution is bypassed.
-            # @option arguments [Hash] task_arguments the set of arguments that
+            # @param [Hash] task_arguments the set of arguments that
             #   should be passed to the composition task instance
             def instanciate(plan, context = DependencyInjectionContext.new,
                             task_arguments: Hash.new,

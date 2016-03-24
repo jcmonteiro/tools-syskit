@@ -116,7 +116,7 @@ module Syskit
 
         # Yield or enumerates incoming connections
         #
-        # @param [Component] component the component whose connections we want
+        # @param [Component] task the component whose connections we want
         #   to enumerate
         # @param [#name,String,nil] port if non-nil, the port for
         #   which we want to enumerate the connections (in which case
@@ -152,7 +152,7 @@ module Syskit
         # Yield or enumerates the connections that exist from the output
         # ports of self.
         #
-        # @param [Component] source_task the task whose connections are being
+        # @param [Component] task the task whose connections are being
         #   enumerated
         # @param [#name,String,nil] port if non-nil, the port for
         #   which we want to enumerate the connections (in which case

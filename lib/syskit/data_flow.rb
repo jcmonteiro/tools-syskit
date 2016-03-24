@@ -28,7 +28,7 @@ module Syskit
         # If non-nil, this holds the set of concrete connections for this data
         # flow graph. It MUST be maintained by some external entity, and as such
         # is set only in contexts where the set of modifications to the graph is
-        # known (e.g. {NetworkGeneration::MergeSolver}
+        # known (e.g. {NetworkGeneration::MergeSolver})
         #
         # @return [ConnectionGraph,nil]
         attr_reader :concrete_connection_graph

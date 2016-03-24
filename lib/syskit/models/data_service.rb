@@ -142,7 +142,7 @@ module Syskit
 
             # Tests whether self already provides another service
             #
-            # @param [Model<DataService>]
+            # @param [Model<DataService>] srv
             def provides?(srv)
                 parent_models.include?(srv)
             end
@@ -417,20 +417,20 @@ module Syskit
 
             # Creates a new submodel of this communication bus model
             #
-            # @param [Hash] options the configuration options. See
+            # @option options [Hash] options the configuration options. See
             #   DataServiceModel#provides for the list of options from data
             #   services
-            # @param [Boolean] lazy_dispatch whether the dynamic services used
+            # @option options [Boolean] lazy_dispatch whether the dynamic services used
             #   to attach the devices should be all instanciated at the beginning
             #   (the default) or only on-demand
-            # @param [Boolean] override_policy if true (the default),
+            # @option options [Boolean] override_policy if true (the default),
             #   the communication bus handling will mark the associated component's
             #   input ports as needs_reliable_connection so that relevant
             #   policies are chosen.
-            # @param [String] message_type the type name of the
+            # @option options [String] message_type the type name of the
             #   type that is used by this combus to communicate with the
             #   components it supports
-            def new_submodel(options = Hash.new, &block)
+            def new_submodel(**options, &block)
                 super(options, &block)
             end
 

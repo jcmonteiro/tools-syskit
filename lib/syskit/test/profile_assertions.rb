@@ -3,9 +3,6 @@ module Syskit
         # Defines assertions for definitions (Syskit::Actions::Profile) or
         # actions that are created from these definitions
         # (Roby::Actions::Interface)
-        #
-        # It assumes that the test class was extended using
-        # {ProfileModelAssertions}
         module ProfileAssertions
             include NetworkManipulation
 
@@ -175,7 +172,7 @@ module Syskit
             # Tests that the given syskit-generated actions can be deployed together
             #
             # It is stronger (and therefore includes)
-            # {assert_can_instanciate_together}
+            # {#assert_can_instanciate_together}
             def assert_can_deploy_together(*actions)
                 if actions.empty?
                     actions = subject_syskit_model
@@ -206,7 +203,7 @@ module Syskit
             # themselve never get started
             #
             # It is stronger (and therefore includes)
-            # {assert_can_deploy_together}
+            # {#assert_can_deploy_together}
             def assert_can_configure_together(*actions)
                 if actions.empty?
                     actions = subject_syskit_model

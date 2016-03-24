@@ -1,6 +1,6 @@
 module Syskit
     module NetworkGeneration
-        # Generate a plan from a set of {InstanceRequirement} objects
+        # Generate a plan from a set of {InstanceRequirements} objects
         #
         # It generates the canonical, non-deployed, plan. It does not take care
         # of the adaptation of an existing plan into the generated one
@@ -77,8 +77,7 @@ module Syskit
                 end
             end
 
-            # Create on {#plan} the task instances that are currently
-            # required in {#real_plan}
+            # Instanciates a list of requirements on {#plan}
             #
             # It does not try to merge the result, {#plan} is probably full
             # of redundancies after this call
@@ -233,7 +232,6 @@ module Syskit
 
             # Verifies that the task allocation is complete
             #
-            # @param [Roby::Plan] plan the plan on which we are working
             # @raise [TaskAllocationFailed] if some abstract tasks are still in
             #   the plan
             def verify_task_allocation

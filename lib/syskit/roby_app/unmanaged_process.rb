@@ -25,17 +25,12 @@ module Syskit
             class TerminateThread < RuntimeError; end
 
             # The {UnmanagedTasksManager} object which created this
-            #
-            # If non-nil, the object's #dead_deployment will be called when self
-            # is stopped
-            #
-            # @return [#dead_deployment,nil]
             attr_reader :process_manager
 
             # The set of deployed tasks
             #
             # @return [{String=>TaskContext}] mapping from the deployed task name as
-            #   defined in {model} to the actual {Orocos::TaskContext}
+            #   to the actual Orocos::TaskContext
             attr_reader :deployed_tasks
 
             # The host on which this process' tasks run
@@ -88,9 +83,8 @@ module Syskit
 
             # Creates a new object managing the tasks that represent a single unmanaged process
             #
-            # @param [nil,#dead_deployment] process_manager the process manager
-            #   which created this process. If non-nil, its #dead_deployment method
-            #   will be called when {stop} is called
+            # @param [UnmanagedTasksManager] process_manager the process manager
+            #   which created this process.
             # @param [String] name the process name
             # @param [OroGen::Spec::Deployment] model the deployment model
             # @param [String] host_id a string identifying the place where the

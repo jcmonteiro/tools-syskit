@@ -96,7 +96,7 @@ module Syskit
             #
             # @param [String] color the color name (in {COLORS}) or a
             #   stylesheet color (e.g. rgb(20, 30, 50)). Anything that is not a
-            #   key in {COLOR} is interpreted as a stylesheet color
+            #   key in {COLORS} is interpreted as a stylesheet color
             # @return [String] a stylesheet color
             def handle_color_argument(color)
                 if c = COLORS[color]
@@ -110,7 +110,7 @@ module Syskit
             #
             # @param [String] state_name the state name
             # @param [String] color the color. It can either be a color name in
-            #   {COLOR} or a Qt stylesheet color (e.g. 'rgb(20, 30, 50)'). Any
+            #   {COLORS} or a Qt stylesheet color (e.g. 'rgb(20, 30, 50)'). Any
             #   string that is not a color name will be interpreted as a
             #   stylesheet color (i.e. no validation is made)
             def declare_state(state_name, color)

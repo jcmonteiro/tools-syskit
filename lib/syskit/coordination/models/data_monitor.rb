@@ -76,7 +76,7 @@ module Syskit
                 # Defines the predicate that will cause this monitor to trigger
                 #
                 # @param [#bind] predicate the predicate model object. See
-                #   the description of the {predicate} attribute.
+                #   the description of the {#predicate} attribute.
                 # 
                 # If a block is given, it is a shortcut to using the
                 # DataMonitorPredicateFromBlock. The block will be called with

@@ -802,7 +802,7 @@ module Syskit
                 end
             end
 
-            # Stub this task context by assigning a {Orocos::RubyTaskContext} to {#orocos_task}
+            # Stub this task context by assigning a Orocos::RubyTaskContext to {#orocos_task}
             def stub!(name = nil)
                 if !name && !orocos_name
                     raise ArgumentError, "orocos_task is not set on #{self}, you must provide an explicit name in #stub!"

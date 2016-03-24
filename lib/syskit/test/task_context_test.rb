@@ -65,7 +65,7 @@ module Syskit
 
             # Spec-style variant to {#assert_is_configurable}
             #
-            # @example test that {#configure} passes
+            # @example test that a task passes configuration
             #   module OroGen::AuvControl
             #     describe Task do
             #       it { is_configurable }

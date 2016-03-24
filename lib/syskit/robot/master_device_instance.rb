@@ -97,7 +97,7 @@ module Syskit
                 com_busses.include?(com_bus)
             end
 
-            # The data service of {#task_model} that is used to receive data from
+            # The data service of {#driver_model} that is used to receive data from
             # the attached com bus for this device. If nil, the task is not
             # expecting to receive any data from the communication bus (only
             # send)
@@ -105,7 +105,7 @@ module Syskit
             # @return [BoundDataService,nil]
             attr_reader :combus_client_in_srv
 
-            # The data service of {#task_model} that is used to send data to
+            # The data service of {#driver_model} that is used to send data to
             # the attached com bus for this device. If nil, the task is not
             # expecting to send any data from the communication bus (only
             # receives)
@@ -198,9 +198,9 @@ module Syskit
             # Finds in {#driver_model}.component_model the data service that should be used to
             # interface with a combus
             #
-            # @param [Model<DataService>] the data service model for the client
+            # @param [Model<DataService>] srv_m the data service model for the client
             #   interface to the combus
-            # @param [String,nil] the expected data service name, or nil if none
+            # @param [String,nil] srv_name the expected data service name, or nil if none
             #   is given. In this case, one is searched by type
             def find_combus_client_srv(srv_m, srv_name)
                 driver_task_model = driver_model.to_component_model
@@ -255,14 +255,14 @@ module Syskit
             # Gets the required slave device, or creates a dynamic one
             #
             # @overload slave(slave_name)
-            #   @arg [String] slave_name the name of a slave service on the
+            #   @param [String] slave_name the name of a slave service on the
             #     device's driver 
             #   @return [Syskit::Robot::SlaveDeviceInstance]
             #
             # @overload slave(dynamic_service_name, :as => slave_name)
-            #   @arg [String] dynamic_service_name the name of a dynamic service
+            #   @param [String] dynamic_service_name the name of a dynamic service
             #     declared on the device's driver with #dynamic_service
-            #   @arg [String] slave_name the name of the slave as it should be
+            #   @param [String] slave_name the name of the slave as it should be
             #     created
             #   @return [Syskit::Robot::SlaveDeviceInstance]
             #   

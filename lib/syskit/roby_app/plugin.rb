@@ -329,7 +329,7 @@ module Syskit
                 using_task_library(name, loader: loader)
             end
 
-            # @deprecated use {using_task_library} instead
+            # @deprecated use {#using_task_library} instead
             def load_orogen_project(name, options = Hash.new)
                 using_task_library(name, options)
             end

@@ -8,8 +8,8 @@ module Syskit
             #   performed on the remote Roby instance (e.g. start/stop ...)
             attr_reader :actions
 
-            # @param [Array<Qt::Action>] the list of actions that can be
-            #   performed on the remote Roby instance
+            # @param [Array<Qt::Action>] actions the list of Qt actions that
+            #   should be added to the context menu
             def initialize(actions: Array.new, **options)
                 super(extra_style: 'margin-left: 2px; margin-top: 2px; font-size: 10pt;',
                       **options)

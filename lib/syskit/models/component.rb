@@ -25,7 +25,7 @@ module Syskit
             inherited_attribute(:data_service, :data_services, map: true) { Hash.new }
 
             # List of modules that should be applied on the underlying
-            # {Orocos::RubyTasks::StubTaskContext} when running tests in
+            # Orocos::RubyTasks::StubTaskContext when running tests in
             # non-stub mode
             #
             # @see stub
@@ -114,7 +114,7 @@ module Syskit
             end
 
             # Define a module that should be applied on the underlying
-            # {Orocos::RubyTasks::StubTaskContext} when running tests in
+            # Orocos::RubyTasks::StubTaskContext when running tests in
             # non-live mode
             def stub(&block)
                 stub_modules.first.class_eval(&block)
@@ -202,7 +202,7 @@ module Syskit
                 to_instance_requirements.if_already_present
             end
 
-            # @deprecated replaced by {prefer_deployed_tasks}
+            # @deprecated replaced by {#prefer_deployed_tasks}
             def use_deployments(*selection)
                 prefer_deployed_tasks(*selection)
             end
@@ -299,7 +299,7 @@ module Syskit
             end
 
             # Resolves the given port model into a component model where
-            # {#component_model} is a proper component (e.g. not a
+            # {Port#component_model} is a proper component (e.g. not a
             # BoundDataService)
             #
             # It is not meant to be used directly. Use {Port#to_component_port}
@@ -574,14 +574,17 @@ module Syskit
             # provide the required input and output ports. If an ambiguity
             # exists, explicit port mappings must be provided.
             #
-            # @param [Hash] arguments option hash, as well as explicit port
-            #   mappings. The values that are not reserved options (listed
-            #   below) are used as port mappings, of the form:
+            # @param [Hash] port_mappings explicit port
+            #   mappings, of the form:
             #      component_port_name => service_port_name
             #   I.e. they specify that service_port_name on the service should
             #   be mapped to component_port_name on the component
-            # @option arguments [String] :slave_of the name of another data
+            # @param [String] as the name of the created service
+            # @param [String] slave_of the name of another data
             #   service, of which this service should be a slave.
+            # @param [Class] bound_service_class the class that should be used to
+            #   represent the created service. This is here for Syskit's benefit
+            #   and should not be used by client code
             #
             # @raise ArgumentError if a data service with that name already
             #   exists
@@ -731,7 +734,7 @@ module Syskit
                 @specialization_counter += 1
             end
 
-            # Called by {Component.specialize} to create the composition model
+            # Called by {#specialize} to create the composition model
             # that will be used for a private specialization
             def create_private_specialization
                 new_submodel
@@ -836,7 +839,7 @@ module Syskit
             # Creates a new proxy task model, subclass of self, that provides
             # the given services
             #
-            # You usually want to use {proxy_task_model}
+            # You usually want to use {#proxy_task_model}
             #
             # @option options [String] :extension (Syskit::PlaceholderTask) the
             #   module that is used to make the new task a placeholder task
@@ -1184,7 +1187,7 @@ module Syskit
     # Resolves the base task model and set of service models that should be used
     # to create a proxy task model for the given component and/or service models
     #
-    # @param [Array<Model<Component>,Model<DataService>>] set of component and
+    # @param [Array<Model<Component>,Model<DataService>>] models set of component and
     #   services that will be proxied
     # @return [Model<Component>,Array<Model<DataService>>,(BoundDataService,nil)
     #

@@ -166,8 +166,8 @@ module Syskit
             # Checks whether the removal of some connections require to run the
             # Syskit deployer right away
             #
-            # @param [{(Orocos::TaskContext,Orocos::TaskContext) => {[String,String] => Hash}}] removed
-            #   the connections, specified between the actual tasks (NOT their Roby representations)
+            # @param [{(Orocos::TaskContext,Orocos::TaskContext) => {[String,String] => Hash}}] connections
+            #   removed connections, specified between the actual tasks (NOT their Roby representations)
             def removed_connections_require_network_update?(connections)
                 unneeded_tasks = nil
                 handle_modified_task = lambda do |orocos_task|
@@ -278,8 +278,8 @@ module Syskit
 
             # Actually create new connections
             #
-            # @param [{(Syskit::TaskContext,Syskit::TaskContext) => {[String,String] => Hash}}] removed
-            #   the connections, specified between the Syskit tasks
+            # @param [{(Syskit::TaskContext,Syskit::TaskContext) => {[String,String] => Hash}}] new
+            #   the new connections, specified between the Syskit tasks
             # @return [[Syskit::TaskContext]] the list of tasks whose connections have been modified
             def apply_connection_additions(new)
                 # And create the new ones
@@ -364,14 +364,14 @@ module Syskit
             #
             #   note that the source and sink task type are unspecified.
             #
-            # @param [Hash<Object,Symbol>] a cache of the task states, as a
+            # @param [Hash<Object,Symbol>] states a cache of the task states, as a
             #   mapping from a source/sink task object as used in the
             #   connections hash to the state name
-            # @param [String] the kind of operation that will be done. It is
+            # @param [String] kind the kind of operation that will be done. It is
             #   purely used to display debugging information
-            # @param [#[]] an object that maps the objects used as tasks in
+            # @param [#[]] mapping an object that maps the objects used as tasks in
             #   connections and states to an object that responds to
-            #   {#rtt_state}, to evaluate the object's state.
+            #   #rtt_state, to evaluate the object's state.
             # @return [Array,Hash] the set of connections that can be performed
             #   right away, and the set of connections that require a state change
             #   in the tasks

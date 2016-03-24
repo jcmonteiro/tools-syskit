@@ -28,7 +28,7 @@ module Syskit
             # @return [Set<(Syskit::Component,Syskit::Component)>]
             attr_reader :invalid_merges
 
-            # The {Roby::DRoby::EventLogger} object on which we log performance
+            # The Roby::DRoby::EventLogger object on which we log performance
             # information
             attr_reader :event_logger
 
@@ -51,7 +51,7 @@ module Syskit
 
             # Returns the task that is used in place of the given task
             #
-            # @param [Roby::Task] the task for which we want to know the
+            # @param [Roby::Task] task the task for which we want to know the
             #   replacement
             # @return [Roby::Task]
             # @see #register_replacement
@@ -191,8 +191,8 @@ module Syskit
 
             # Tests whether task.merge(target_task) is a valid operation
             #
+            # @param [Syskit::TaskContext] merged_task
             # @param [Syskit::TaskContext] task
-            # @param [Syskit::TaskContext] target_task
             #
             # @return [false,true] if false, the merge is not possible. If
             #   true, it is possible. If nil, the only thing that makes the
@@ -440,17 +440,17 @@ module Syskit
                 return true, mappings
             end
 
-            # Returns the set of inputs that differ in two given components,
-            # possibly using merge cycle information
+            # Returns the set of inputs that differ in two given components
             #
-            # @param [Hash<Roby::Task,Roby::Task>] mapping from the set of
-            #   target tasks into the set of tasks that should be used to
-            #   compare the inputs. This is exploited when resolving cycles
-            # @return [Array<(String,String,Roby::Task,Roby::Task)>,nil]
+            # @param [Syskit::TaskContext] merged_task the task that we are
+            #   attempting to merge
+            # @param [Syskit::TaskContext] task the task into which we are
+            #   attempting to merge merged_task into
+            # @return [Array<(String,Roby::Task,Roby::Task)>,nil]
             #   If nil, the two tasks have inputs that do not match and could
-            #   not match even after a merge cycle resolution pass.
-            #   Otherwise, the set of mismatching inputs is returned, in which
-            #   each mismatch is a tuple (port_name,source_port,task_source,target_source).
+            #   not match, for instance because their types differ. Otherwise,
+            #   the methdo returns the list of mismatching inputs, as a list of
+            #   tuples (sink_port_name, source_for_merged_task, source_for_task)
             def resolve_input_matching(merged_task, task)
                 m_inputs = Hash.new { |h, k| h[k] = Hash.new }
                 merged_task.each_concrete_input_connection do |m_source_task, m_source_port, sink_port, m_policy|

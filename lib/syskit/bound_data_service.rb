@@ -3,7 +3,7 @@ module Syskit
         #
         # It is usually created from a Models::BoundDataService instance using
         # Models::BoundDataService#bind(component), or simply by calling the
-        # task's service access (i.e. the _srv helpers or {Component#find_data_service)
+        # task's service access (i.e. the _srv helpers or {Component#find_data_service})
         #
         # The model-level bound data service corresponding to self is {#model}.
         # The data service model is therefore {#model}.{#model}. The component

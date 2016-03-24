@@ -13,7 +13,7 @@ module Syskit
             #
             # @see selected_model
             attr_reader :selected
-            # [{Model<DataService> => Models::BoundDataService}] a mapping from
+            # @return [Hash<Model<DataService>,Models::BoundDataService>] a mapping from
             # the services in {#required} to the services of {#component_model}.
             attr_reader :service_selection
 
@@ -33,9 +33,9 @@ module Syskit
                 @service_selection = service_selection.dup
             end
 
-            # Returns the simplest model representation for {selected}
+            # Returns the simplest model representation for {#selected}
             #
-            # It mostly either returns {selected} or {selected}.model if
+            # It mostly either returns {#selected} or {#selected}.model if
             # {InstanceRequirements#plain?} returns resp. false or true
             #
             # @return [BoundDataService,Model<Component>,InstanceRequirements]
@@ -82,13 +82,13 @@ module Syskit
             # placeholder representing the required models by the given
             # component model. The additional mappings are only used as hints.
             #
-            # @param [Model<Component>] component_m the component model
+            # @param [Model<Component>] selected the component model
             # @param [Array<Model<Component>,Model<DataService>>] required
             #   the set of models that are required
-            # @param [{Model<DataService>=>Models::BoundDataService}] mappings a mapping
+            # @param [Hash<Model<DataService>,Models::BoundDataService>] mappings a mapping
             #   from data service models to the corresponding selected model on
             #   the component model
-            # @return [{Model<DataService>=>Models::BoundDataService}] the
+            # @return [Hash<Model<DataService>,Models::BoundDataService>] the
             #   mapping from the data service models in required_models to the
             #   corresponding bound data services in component_m
             #

@@ -75,7 +75,7 @@ module Syskit
 
             # Pushes the current state of the context on the save stack.
             # #restore will go back to this exact state, regardless of the
-            # number of {push} calls, and {pop} will stop at the last savepoint
+            # number of {#push} calls, and {#pop} will stop at the last savepoint
             #
             # The save/restore mechanism is stack-based, so when doing
             #

@@ -240,7 +240,7 @@ module Syskit
             # specializations are not compatible (i.e. should never be applied
             # at the same time).
             #
-            # @param [#[]] a proc object given explicitly if the block form
+            # @param [#[]] explicit a proc object given explicitly if the block form
             #   is not desired
             # @yieldparam spec0 [CompositionSpecialization] the first
             #   specialization

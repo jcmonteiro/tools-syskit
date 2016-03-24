@@ -25,7 +25,7 @@ module Syskit
         #    matching it are disabled
         #
         # Groups are defined with {#create_group} and enabled/disabled with
-        # {#enable_group}/{#disable_group}. A new group is enabled by default.
+        # {#enable_log_group}/{#disable_log_group}. A new group is enabled by default.
         #
         # Logs groups are usually defined in a robot file, in a Robot.conf
         # block:
@@ -78,9 +78,9 @@ module Syskit
             #
             # Currently, properties are logged in a properties.0.log file
             attr_predicate :conf_logs_enabled?
-            # See {#conf_log_enabled?}
+            # See {#conf_logs_enabled?}
             def enable_conf_logging; @conf_logs_enabled = true end
-            # See {#conf_log_enabled?}
+            # See {#conf_logs_enabled?}
             def disable_conf_logging; @conf_logs_enabled = false end
 
             # @!method port_logs_enabled?
@@ -91,9 +91,9 @@ module Syskit
             # done with enable/disable log groups (#enable_log_group) and single
             # ports (#exclude_from_log)
             attr_predicate :port_logs_enabled?
-            # See {#log_enabled?}
+            # See {#port_logs_enabled?}
             def enable_port_logging; @port_logs_enabled = true end
-            # See {#log_enabled?}
+            # See {#port_logs_enabled?}
             def disable_port_logging; @port_logs_enabled = false end
 
             # Fetch a group by its name

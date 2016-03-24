@@ -58,7 +58,7 @@ module Syskit
             # Injects the tasks necessary to deploy #requirements on the plan
             # associated with the given action interface
             #
-            # @param [ActionInterface] the action interface
+            # @param [ActionInterface] action_interface the action interface
             # @param [Hash] arguments the arguments (unused)
             # @return [Roby::Task] the action task
             def run(action_interface, arguments = Hash.new)

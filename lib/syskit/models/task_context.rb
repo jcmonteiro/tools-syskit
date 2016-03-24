@@ -171,19 +171,17 @@ module Syskit
                 evaluation.instance_eval(&block)
             end
 
-            # Sets up self on the basis of {#supermodel}
+            # @api private
             #
-            # @param [String] name an optional name for this submodel
-            # @return [void]
-            def setup_submodel(submodel, options = Hash.new)
-                orogen_model, options = Kernel.filter_options options, :orogen_model
-                if !(m = orogen_model[:orogen_model])
-                    m = self.orogen_model.class.new(Roby.app.default_orogen_project, options[:orogen_model_name])
-                    m.subclasses self.orogen_model
+            # Method called internally by metaruby
+            def setup_submodel(submodel, orogen_model: nil, orogen_model_name: nil, **options)
+                if !orogen_model
+                    orogen_model = self.orogen_model.class.new(Roby.app.default_orogen_project, orogen_model_name)
+                    orogen_model.subclasses self.orogen_model
                 end
-                submodel.orogen_model = m
+                submodel.orogen_model = orogen_model
 
-                super
+                super(submodel, **options)
                 submodel.make_state_events
             end
 

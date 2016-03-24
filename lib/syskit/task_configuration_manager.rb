@@ -1,5 +1,5 @@
 module Syskit
-    # Adapter for {Orocos::TaskConfigurations} to take into account the
+    # Adapter for Orocos::TaskConfigurations to take into account the
     # conventions inside Syskit apps
     class TaskConfigurationManager < Orocos::TaskConfigurations
         attr_reader :app

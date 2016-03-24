@@ -4,8 +4,6 @@ module Syskit
         #
         # It [declares](StateLabel#declare_state) the known job states and
         # assigns proper colors to it.
-        #
-        # @example
         class JobStateLabel < StateLabel
             def initialize(**options)
                 super

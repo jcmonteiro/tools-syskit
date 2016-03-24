@@ -109,7 +109,7 @@ module Syskit
             # Instanciates a new bound dynamic service on the underlying
             # component
             #
-            # @param [String] the name of the bound service
+            # @param [String] name the name of the bound service
             # @param options options that should be given to {#block}. These
             #   options are available to the block as an 'options' local variable
             # @return [BoundDynamicDataService]

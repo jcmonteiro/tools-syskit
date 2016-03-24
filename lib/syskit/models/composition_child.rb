@@ -80,9 +80,11 @@ module Syskit
             # Automatically computes the connections between the output ports of
             # self to the given port or component interface
             #
-            # @param [Port,CompositionChild] the sink side of the connection. If
+            # @param [Port,CompositionChild] sink the sink side of the connection. If
             #   a Port is given, it has to be a port on a CompositionChild of
             #   the same composition than self
+            # @param [Hash] policy the connection policy, as passed to the
+            #   underlying port connection method
             # @return [Array<Port>] the set of created connections
             def connect_to(sink, policy = Hash.new)
                 Syskit.connect(self, sink, policy)

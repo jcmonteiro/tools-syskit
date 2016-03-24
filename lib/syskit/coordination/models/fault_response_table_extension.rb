@@ -44,7 +44,7 @@ module Syskit
                 #
                 # @param [Model<DataMonitoringTable>] table a data monitoring table
                 #   model
-                # @param [{String=>String,#name}] mapping from the name of an
+                # @param [{String=>String,#name}] arguments from the name of an
                 #   argument on the data monitoring table to the corresponding
                 #   argument on the fault response table. All arguments required
                 #   by the data monitoring table should be set this way

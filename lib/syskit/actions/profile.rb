@@ -84,7 +84,7 @@ module Syskit
             # @return [Hash<String,InstanceRequirements>]
             attr_reader :tags
             # The set of profiles that have been used in this profile with
-            # {use_profile}
+            # {#use_profile}
             # @return [Array<Profile>]
             attr_reader :used_profiles
             # The DependencyInjection object that is being defined in this
@@ -453,7 +453,7 @@ module Syskit
             # A syskit profile is a group of dependency injections (use flags)
             # and instance definitions. All the definitions it contains can
             # then be exported on an action interface using
-            # {use_profile}
+            # {Profile#use_profile}
             #
             # @return [Syskit::Actions::Profile]
             def profile(name, &block)

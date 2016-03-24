@@ -919,7 +919,7 @@ module Syskit
             end
         end
 
-        # Raised during dataflow propagation if {#done_port_info} has already
+        # Raised during dataflow propagation if {NetworkGeneration::DataFlowComputation#done_port_info} has already
         # been called on a port that is being modified
         class ModifyingFinalizedPortInfo < ArgumentError
             attr_reader :task, :port_name, :done_at

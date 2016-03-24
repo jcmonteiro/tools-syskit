@@ -106,9 +106,9 @@ module Syskit
             
 
             # Finds the corresponding syskit port
-            # @param [String] the name of the port that should be found
+            # @param [String] name the name of the port that should be found
             # @return [Syskit::Port] the actuar orocos port with the given name
-            # @raises [ArgumentError] if the port does not exist
+            # @raise [ArgumentError] if the port does not exist
             def port_by_name(name)
                 if p = find_input_port(name) || find_output_port(name) 
                     p
@@ -194,7 +194,7 @@ module Syskit
             #
             # Helper for #added_child_object and #removing_child_object
             #
-            # It adds the task to {Flows::DataFlow#modified_tasks} whenever the
+            # It adds the task to {DataFlow#modified_tasks} whenever the
             # DataFlow relations is changed in a way that could require changing
             # the underlying Orocos components connections.
             def dataflow_change_handler(ignore_missing_child, child, mappings) # :nodoc:
@@ -240,7 +240,7 @@ module Syskit
 
             # Called when a new child is added to this composition.
             #
-            # It updates {Flows::DataFlow#modified_tasks} so that the engine can
+            # It updates {DataFlow#modified_tasks} so that the engine can
             # update the underlying task's connections
             def added_sink(child, mappings) # :nodoc:
                 super
@@ -254,7 +254,7 @@ module Syskit
 
             # Called when a child is removed from this composition.
             #
-            # It updates {Flows::DataFlow#modified_tasks} so that the engine can
+            # It updates {DataFlow#modified_tasks} so that the engine can
             # update the underlying task's connections
             def removing_sink(child) # :nodoc:
                 super
