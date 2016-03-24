@@ -30,8 +30,7 @@ module Syskit
             Roby.app.app_dir = nil
             Roby.app.search_path.clear
             Roby.app.filter_backtraces = false
-            ENV['ROBY_PLUGIN_PATH'] = File.expand_path(File.join(File.dirname(__FILE__), '..', 'roby_app', 'register_plugin.rb'))
-            Roby.app.using 'syskit', force: true
+            Roby.app.using 'syskit'
             Syskit.conf.export_types = false
             Syskit.conf.disables_local_process_server = true
             Syskit.conf.only_load_models = true
