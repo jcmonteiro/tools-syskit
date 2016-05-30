@@ -116,7 +116,7 @@ describe Syskit::Actions::Profile do
             req = Syskit::InstanceRequirements.new
             profile = Syskit::Actions::Profile.new
             result = profile.define 'test', req
-            assert_equal 'test', result.name
+            assert_equal 'test_def', result.name
             assert_same profile, result.profile
         end
     end
@@ -221,7 +221,7 @@ describe Syskit::Actions::Profile do
             req = profile.definition('test')
             assert_kind_of Syskit::Actions::Profile::Definition, req
             assert_same profile, req.profile
-            assert_equal 'test', req.name
+            assert_equal 'test_def', req.name
         end
         
         it "raises ArgumentError if the definition does not exist" do
@@ -278,7 +278,7 @@ describe Syskit::Actions::Profile do
         it "returns an instance requirements object that points to the profile" do
             req = profile.resolved_definition('test')
             assert_same profile, req.profile
-            assert_equal 'test', req.name
+            assert_equal 'test_def', req.name
         end
         
         it "raises ArgumentError if the definition does not exist" do

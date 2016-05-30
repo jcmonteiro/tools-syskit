@@ -244,7 +244,7 @@ module Syskit
                     direct_selection_for(requirements) || requirements
                 req = resolved.to_instance_requirements
                 
-                definition = Definition.new(self, name)
+                definition = Definition.new(self, "#{name}_def")
                 definition.doc MetaRuby::DSLs.parse_documentation_block(->(file) { Roby.app.app_file?(file) }, /^define$/)
                 definition.advanced = false
                 definition.merge(req)
@@ -291,6 +291,7 @@ module Syskit
 
                 result = ProfileInstanceRequirements.new(self, name, advanced: req.advanced?)
                 result.merge(req)
+                result.name = req.name
                 inject_di_context(result)
                 result.doc(req.doc)
                 result

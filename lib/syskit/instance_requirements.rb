@@ -803,6 +803,7 @@ module Syskit
                     else sel
                     end
                 end
+                task.requirements.name = name
                 task.requirements.merge(task_requirements)
 
                 if required_host && task.respond_to?(:required_host=)
