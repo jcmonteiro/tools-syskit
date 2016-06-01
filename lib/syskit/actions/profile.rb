@@ -30,10 +30,19 @@ module Syskit
 
             class Definition < ProfileInstanceRequirements
                 def to_action_model(profile = self.profile, doc = self.doc)
-                    action_model = profile.resolved_definition(name).
+                    action_model = resolve.
                         to_action_model(profile, doc || "defined in #{profile}")
                     action_model.advanced = advanced?
                     action_model
+                end
+
+                def resolve
+                    result = ProfileInstanceRequirements.new(profile, name, advanced: advanced?)
+                    result.merge(self)
+                    result.name = name
+                    profile.inject_di_context(result)
+                    result.doc(doc)
+                    result
                 end
             end
 
@@ -264,9 +273,7 @@ module Syskit
                 if !req
                     raise ArgumentError, "profile #{self.name} has no definition called #{name}"
                 end
-                req = req.dup
-                req.name = name
-                req
+                req.dup
             end
 
             # Tests whether self has a definition with a given name
@@ -288,13 +295,7 @@ module Syskit
                 if !req
                     raise ArgumentError, "profile #{self.name} has no definition called #{name}"
                 end
-
-                result = ProfileInstanceRequirements.new(self, name, advanced: req.advanced?)
-                result.merge(req)
-                result.name = req.name
-                inject_di_context(result)
-                result.doc(req.doc)
-                result
+                req.resolve
             end
 
             # Enumerate all definitions available on this profile
@@ -305,8 +306,8 @@ module Syskit
             # @see each_resolved_definition
             def each_definition(&block)
                 return enum_for(__method__) if !block_given?
-                definitions.each_key do |name|
-                    yield(definition(name))
+                definitions.each_value do |req|
+                    yield(req.dup)
                 end
             end
 
@@ -316,8 +317,8 @@ module Syskit
             #   {#resolved_definition}
             def each_resolved_definition
                 return enum_for(__method__) if !block_given?
-                each_definition do |raw_def|
-                    yield(resolved_definition(raw_def.name))
+                definitions.each_value do |req|
+                    yield(req.resolve)
                 end
             end
 
