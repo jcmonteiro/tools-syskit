@@ -594,7 +594,6 @@ module Syskit
                 ::Robot.include Syskit::RobyApp::RobotExtension
                 ::Roby.conf.syskit = Syskit.conf
 
-                OroGen.load_orogen_plugins('syskit')
                 Roby.app.filter_out_patterns << Regexp.new(Regexp.quote(OroGen::OROGEN_LIB_DIR))
                 Roby.app.filter_out_patterns << Regexp.new(Regexp.quote(Orocos::OROCOSRB_LIB_DIR))
                 Roby.app.filter_out_patterns << Regexp.new(Regexp.quote(Typelib::TYPELIB_LIB_DIR))
