@@ -47,6 +47,15 @@ module Syskit
             # task name and apply configuration stored there (if there is any)
             attr_reader :orocos
 
+            # A global deployment group
+            #
+            # This exists for backward-compatibility reasons, to ease the
+            # transition to the deployment API, as opposed to the older
+            # name-based deployment management
+            #
+            # @return [Models::DeploymentGroup]
+            attr_reader :deployment_group
+
             # Controls whether the orogen types should be exported as Ruby
             # constants
             #
@@ -88,8 +97,7 @@ module Syskit
             #
             # Note that it is called by {#initialize}
             def clear
-                @deployments = Hash.new { |h, k| h[k] = Set.new }
-                @deployed_tasks = Hash.new
+                @deployment_group = Models::DeploymentGroup.new(conf: self, loader: app.default_loader)
                 @logs = LoggingConfiguration.new
                 @orocos = Roby::OpenStruct.new
             end
@@ -171,7 +179,7 @@ module Syskit
 
             # If multiple deployments are available for a task, and this task is
             # not a device driver, the resolution engine will randomly pick one
-            # if this flag is set to false (the default). If set to true, it
+            # if this flag is set to false. If set to true (the default), it
             # will generate an error
             attr_predicate :reject_ambiguous_deployments?, true
 
@@ -241,6 +249,12 @@ module Syskit
             # @return [String]
             attr_accessor :sd_domain
 
+            # If set, it is the list of deployments that should be published on
+            # DNS-SD. It has no effect if {#sd_domain} is not set.
+            #
+            # @return [Array<#===>]
+            attr_accessor :publish_white_list
+
             # A set of regular expressions that should match the names of the
             # deployments that should be published on DNS-SD if {#sd_domain} is
             # set
@@ -249,16 +263,6 @@ module Syskit
             #
             # @return [Array<String,Regexp>]
             attr_reader :sd_publish_list
-
-            # The set of known deployments on a per-process-server basis
-            #
-            # @return [Hash<String,[ConfiguredDeployment]>]
-            attr_reader :deployments
-
-            # A mapping from a task name to the deployment that provides it
-            #
-            # @return [{String => Models::ConfiguredDeployment}]
-            attr_reader :deployed_tasks
 
             # Margin added to computed buffer sizes
             #
@@ -287,128 +291,6 @@ module Syskit
                     register_process_server(sim_name, mng, "")
                 end
                 process_server_config_for(sim_name)
-            end
-
-            # Declare deployed versions of some Ruby tasks
-            def use_ruby_tasks(mappings, register: true)
-                mappings.map do |task_model, name|
-                    deployment_model = task_model.deployment_model
-                    configured_deployment = Models::ConfiguredDeployment.
-                        new('ruby_tasks', deployment_model, Hash['task' => name], name, Hash.new)
-                    register_configured_deployment(configured_deployment)
-                    configured_deployment
-                end
-            end
-
-            # Declare tasks that are going to be started by some other process,
-            # but whose tasks are going to be integrated in the syskit network
-            def use_unmanaged_task(mappings, register: true)
-                mappings.map do |task_model, name|
-                    if task_model.respond_to?(:to_str)
-                        task_model_name = task_model
-                        task_model = Syskit::TaskContext.find_model_from_orogen_name(task_model_name)
-                        if !task_model
-                            raise ArgumentError, "#{task_model_name} is not a known oroGen model name"
-                        end
-                    end
-                        
-                    orogen_model = task_model.orogen_model
-                    deployment_model = Deployment.new_submodel(name: "Deployment::Unmanaged::#{name}") do
-                        task name, orogen_model
-                    end
-
-                    configured_deployment = Models::ConfiguredDeployment.
-                        new('unmanaged_tasks', deployment_model, Hash[name => name], name, Hash.new)
-                    register_configured_deployment(configured_deployment)
-                    configured_deployment
-                end
-            end
-
-            # Add the given deployment (referred to by its process name, that is
-            # the name given in the oroGen file) to the set of deployments the
-            # engine can use.
-            #
-            # @option options [String] :on (localhost) the name of the process
-            #   server on which this deployment should be started
-            #
-            # @return [Array<Deployment>]
-            def use_deployment(*names, register: true, on: 'localhost', **run_options)
-                deployment_spec = Hash.new
-                if names.last.kind_of?(Hash)
-                    deployment_spec = names.pop
-                end
-
-                process_server_name = on
-                process_server_config =
-                    if app.simulation?
-                        sim_process_server(process_server_name)
-                    else
-                        process_server_config_for(process_server_name)
-                    end
-
-                deployments_by_name = Hash.new
-                names = names.map do |n|
-                    if n.respond_to?(:orogen_model)
-                        deployments_by_name[n.orogen_model.name] = n
-                        n.orogen_model
-                    else n
-                    end
-                end
-                deployment_spec = deployment_spec.map_key do |k|
-                    if k.respond_to?(:orogen_model)
-                        deployments_by_name[k.orogen_model.name] = k
-                        k.orogen_model
-                    else k
-                    end
-                end
-
-                new_deployments, _ = Orocos::Process.parse_run_options(*names, deployment_spec, loader: app.default_loader, **run_options)
-                new_deployments.map do |deployment_name, mappings, name, spawn_options|
-                    model = deployments_by_name[deployment_name] ||
-                        app.using_deployment(deployment_name)
-                    model.default_run_options.merge!(default_run_options(model))
-
-                    configured_deployment = Models::ConfiguredDeployment.
-                        new(process_server_config.name, model, mappings, name, spawn_options)
-                    register_configured_deployment(configured_deployment)
-                    configured_deployment
-                end
-            end
-
-            def register_configured_deployment(configured_deployment)
-                configured_deployment.each_orogen_deployed_task_context_model do |task|
-                    orocos_name = task.name
-                    if deployed_tasks[orocos_name] && deployed_tasks[orocos_name] != configured_deployment
-                        raise TaskNameAlreadyInUse.new(orocos_name, deployed_tasks[orocos_name], configured_deployment), "there is already a deployment that provides #{orocos_name}"
-                    end
-                end
-                configured_deployment.each_orogen_deployed_task_context_model do |task|
-                    deployed_tasks[task.name] = configured_deployment
-                end
-                deployments[configured_deployment.process_server_name] << configured_deployment
-            end
-
-            # Add all the deployments defined in the given oroGen project to the
-            # set of deployments that the engine can use.
-            #
-            # @option options [String] :on the name of the process server this
-            #   project should be loaded from
-            # @return [Array<Model<Deployment>>] the set of deployments
-            # @see #use_deployment
-            def use_deployments_from(project_name, options = Hash.new)
-                Syskit.info "using deployments from #{project_name}"
-                orogen = app.using_task_library(project_name, options[:loader])
-
-                result = []
-                orogen.deployers.each_value do |deployment_def|
-                    if deployment_def.install?
-                        Syskit.info "  #{deployment_def.name}"
-                        # Currently, the supervision cannot handle orogen_default tasks 
-                        # properly, thus filtering them out for now 
-                        result << use_deployment(deployment_def.name, options)
-                    end
-                end
-                result
             end
 
             # Returns the set of options that should be given to Process.spawn
@@ -596,63 +478,7 @@ module Syskit
 
                 ps = ProcessServerConfig.new(name, client, log_dir)
                 process_servers[name] = ps
-                reload_deployments_for(name)
                 ps
-            end
-
-            # Reloads all deployment models
-            def reload_deployments
-                names = deployments.keys
-                names.each do |process_server_name|
-                    reload_deployments_for(process_server_name)
-                end
-            end
-
-            # Reloads the deployments that have been declared for the given
-            # process server
-            def reload_deployments_for(process_server_name)
-                pending_deployments = clear_deployments_for(process_server_name)
-                pending_deployments.each do |d|
-                    next if !d.model.orogen_model.project.name
-
-                    app.using_task_library(d.model.orogen_model.project.name)
-                    model = app.using_deployment(d.model.orogen_model.name)
-                    d = Models::ConfiguredDeployment.new(
-                        process_server_name, model,
-                        d.name_mappings, d.process_name, d.spawn_options)
-                    register_configured_deployment(d)
-                end
-            end
-
-            # Deregisters deployments that are coming from a given process
-            # server
-            #
-            # @param [String] process_server_name the name of the process server
-            # @return [Array<Models::ConfiguredDeployment>] the set of
-            #   configured deployments that were deregistered
-            def clear_deployments_for(process_server_name)
-                registered_deployments = deployments.delete(process_server_name) ||
-                    Array.new
-
-                registered_deployments.each do |d|
-                    deregister_configured_deployment(d)
-                end
-                registered_deployments
-            end
-
-            # Deregister deployments
-            #
-            # @param [ConfiguredDeployment] configured_deployment the deployment to remove, as
-            #   returned by e.g. {#use_deployment}
-            # @return [void]
-            def deregister_configured_deployment(configured_deployment)
-                configured_deployment.each_orogen_deployed_task_context_model do |task|
-                    if deployed_tasks[task.name] == configured_deployment
-                        deployed_tasks.delete(task.name)
-                    end
-                end
-                deployments[configured_deployment.process_server_name].
-                    delete(configured_deployment)
             end
 
             # Deregisters a process server
@@ -667,11 +493,34 @@ module Syskit
                 end
 
                 app.default_loader.remove ps.client.loader
-                clear_deployments_for(name)
                 if app.simulation? && process_servers["#{name}-sim"]
                     remove_process_server("#{name}-sim")
                 end
                 ps
+            end
+
+            # @api deprecated use the object-based deployment API instead
+            def use_ruby_tasks(mappings)
+                Roby.warn_deprecated "conf.use_ruby_tasks is deprecated, use the profile-level deployment API"
+                deployment_group.use_ruby_tasks(mappings)
+            end
+
+            # @api deprecated use the object-based deployment API instead
+            def use_unmanaged_task(mappings)
+                Roby.warn_deprecated "conf.use_unmanaged_task is deprecated, use the profile-level deployment API"
+                deployment_group.use_unmanaged_task(mappings)
+            end
+
+            # @api deprecated use the object-based deployment API instead
+            def use_deployment(*names, on: 'localhost', **run_options)
+                Roby.warn_deprecated "conf.use_deployment is deprecated, use the profile-level deployment API"
+                deployment_group.use_deployment(*names, on: on, **run_options)
+            end
+
+            # @api deprecated use the object-based deployment API instead
+            def use_deployments_from(*names, on: 'localhost', **run_options)
+                Roby.warn_deprecated "conf.use_deployment is deprecated, use the profile-level deployment API"
+                deployment_group.use_deployment(*names, on: on, **run_options)
             end
         end
     end

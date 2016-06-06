@@ -5,6 +5,7 @@ module Syskit
             def setup
                 @__test_created_deployments = Array.new
                 @__test_overriden_configurations = Array.new
+                @__test_deployment_group = Models::DeploymentGroup.new
                 super
             end
 
@@ -12,9 +13,6 @@ module Syskit
                 super
                 @__test_overriden_configurations.each do |model, manager|
                     model.configuration_manager = manager
-                end
-                @__test_created_deployments.each do |d|
-                    Syskit.conf.deregister_configured_deployment(d)
                 end
             end
 
@@ -27,11 +25,15 @@ module Syskit
             end
 
             def use_deployment(*args)
-                @__test_created_deployments.concat(Syskit.conf.use_deployment(*args).to_a)
+                @__test_deployment_group.use_deployment(*args)
             end
 
             def use_ruby_tasks(*args)
-                @__test_created_deployments.concat(Syskit.conf.use_ruby_tasks(*args).to_a)
+                @__test_deployment_group.use_ruby_tasks(*args)
+            end
+
+            def use_unmanaged_task(*args)
+                @__test_deployment_group.use_unmanaged_task(*args)
             end
 
             def normalize_instanciation_models(to_instanciate)
@@ -103,6 +105,9 @@ module Syskit
                 end.compact
                 root_tasks = placeholder_tasks.map(&:as_service)
                 requirement_tasks = placeholder_tasks.map(&:planning_task)
+                requirement_tasks.each do |task|
+                    task.requirements.deployment_group.use_group!(@__test_deployment_group)
+                end
 
                 plan.execution_engine.process_events_synchronous do
                     requirement_tasks.each { |t| t.start! }
@@ -178,7 +183,7 @@ module Syskit
                 model
             end
 
-            def syskit_stub_configured_deployment(task_model = nil, name = nil, &block)
+            def syskit_stub_configured_deployment(task_model = nil, name = nil, register: true, &block)
                 if task_model
                     task_model = task_model.to_component_model
                 end
@@ -192,9 +197,11 @@ module Syskit
                     end
                 end
 
-                Syskit.conf.process_server_for('stubs').
-                    register_deployment_model(deployment_model.orogen_model)
-                Syskit.conf.use_deployment(deployment_model.orogen_model, on: 'stubs').first
+                deployment = Models::ConfiguredDeployment.new('stubs', deployment_model, Hash[name => name], name)
+                if register
+                    @__test_deployment_group.register_configured_deployment(deployment)
+                end
+                deployment
             end
 
             # Create a new stub deployment model that can deploy a given task
@@ -271,9 +278,10 @@ module Syskit
 
                 syskit_stub_conf(task_m, *model.arguments[:conf])
 
-                syskit_stub_deployment_model(task_m, as)
-                model.deployment_hints.clear
-                model.prefer_deployed_tasks(as)
+                deployment = syskit_stub_configured_deployment(task_m, as, register: false)
+                model.reset_deployment_selection
+                model.use_configured_deployment(deployment)
+                model
             end
 
             # Create empty configuration sections for the given task model
@@ -568,7 +576,7 @@ module Syskit
 
             def syskit_stub_network_deployment(task, as: syskit_default_stub_name(task.model))
                 task_m = task.concrete_model
-                deployment_model = syskit_stub_configured_deployment(task_m, as)
+                deployment_model = syskit_stub_configured_deployment(task_m, as, register: false)
                 syskit_stub_conf(task_m, *task.arguments[:conf])
                 task.plan.add(deployer = deployment_model.new)
                 deployed_task = deployer.instanciate_all_tasks.first

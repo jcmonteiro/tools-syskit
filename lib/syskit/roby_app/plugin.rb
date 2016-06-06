@@ -268,16 +268,11 @@ module Syskit
             # setup
             def self.clear_config(app)
                 Syskit.conf.clear
-                Syskit.conf.deployments.clear
             end
 
             def self.require_models(app)
                 if has_local_process_server?
                     connect_to_local_process_server(app)
-                end
-
-                app.isolate_load_errors("while reloading deployment definitions") do
-                    Syskit.conf.reload_deployments
                 end
             end
 

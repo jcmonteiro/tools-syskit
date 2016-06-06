@@ -527,9 +527,9 @@ module Syskit
                     end
 
                     pp.nest(2) do
-                        possible_deployments.each do |host, deployment, task_name, existing|
+                        possible_deployments.each do |configured_deployment, task_name, existing|
                             pp.breakable
-                            pp.text "task #{task_name} from deployment #{deployment.orogen_model.name} defined in #{deployment.orogen_model.project.name} on #{host}"
+                            pp.text "task #{task_name} from deployment #{configured_deployment.orogen_model.name} defined in #{configured_deployment.orogen_model.project.name} on #{configured_deployment.process_server_name}"
                             pp.nest(2) do
                                 existing.each do |task, parents|
                                     pp.breakable
