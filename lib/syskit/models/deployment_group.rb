@@ -80,6 +80,15 @@ module Syskit
                 invalidate_caches
             end
 
+            # Returns a deployment group that represents a single deployed task
+            def find_deployed_task_by_name(task_name)
+                if configured_deployment = find_deployed_task_by_name(task_name)
+                    result = new(conf: conf, loader: loader, simulation: simulation)
+                    result.register_deployed_task(task_name, configured_deployment)
+                    result
+                end
+            end
+
             # A mapping from task models to the set of registered
             # deployments that apply on these task models
             #
@@ -137,6 +146,19 @@ module Syskit
             # Returns all the deployments registered on a given process manager
             def find_all_deployments_from_process_manager(process_manager_name)
                 deployments[process_manager_name] || Array.new
+            end
+
+            # Register a specific task of a configured deployment
+            def register_deployed_task(task_name, configured_deployment)
+                if existing = find_deployed_task_by_name(task_name)
+                    if existing != configured_deployment
+                        raise TaskNameAlreadyInUse.new(task_name, existing, configured_deployment), "there is already a deployment that provides #{task_name}"
+                    end
+                else
+                    deployed_tasks[tasks_name] = configured_deployment
+                end
+                deployments[configured_deployment.process_server_name] ||= Set.new
+                deployments[configured_deployment.process_server_name] << configured_deployment
             end
 
             # Register a new deployment in this group
