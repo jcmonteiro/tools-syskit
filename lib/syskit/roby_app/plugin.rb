@@ -111,6 +111,9 @@ module Syskit
                     end
                 end
 
+                orogen.each_deployment do |deployer_model|
+                    deployment_define_from_orogen(deployer_model)
+                end
                 orogen
             end
 
@@ -400,8 +403,10 @@ module Syskit
             # Loads the oroGen deployment model for the given name and returns
             # the corresponding syskit model
             def using_deployment(name, loader: default_loader)
-                deployer = loader.deployment_model_from_name(name)
-                deployment_define_from_orogen(deployer)
+                # This loads the underlying orogen project which causes the
+                # deployer to be registered
+                deployment_model = loader.deployment_model_from_name(name)
+                Deployment.find_model_by_orogen(deployment_model)
             end
 
             # Loads the oroGen deployment model based on a ROS launcher file
