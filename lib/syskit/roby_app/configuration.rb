@@ -277,6 +277,14 @@ module Syskit
             # It maps the server name to the Orocos::ProcessServer instance
             attr_reader :process_servers
 
+            # @deprecated use {#sim_process_server_config_for} instead for
+            #   consistency with {#process_server_config_for}
+            #
+            # (see #sim_process_server_config_for)
+            def sim_process_server(name)
+                sim_process_server_config_for(name)
+            end
+
             # Ensures that a ruby process server is present with the given name
             #
             # It is used when running in simulation mode, to "fake" the task
@@ -284,7 +292,7 @@ module Syskit
             #
             # @param [String] name the name of the original process server
             # @return [ProcessServerConfig] the registered process server
-            def sim_process_server(name)
+            def sim_process_server_config_for(name)
                 sim_name = "#{name}-sim"
                 if !process_servers[sim_name]
                     mng = Orocos::RubyTasks::ProcessManager.new(app.default_loader, task_context_class: Orocos::RubyTasks::StubTaskContext)
@@ -347,16 +355,26 @@ module Syskit
                 process_servers[name.to_str]
             end
 
+            # Exception raised when trying to register a non-local process
+            # server while {#local_only?} is set
+            class LocalOnlyConfiguration < ArgumentError; end
+            # Exception raised when trying to access a process manager that does
+            # not exist
+            class UnknownProcessServer < ArgumentError; end
+            # Exception raised when trying to connect to a process manager that
+            # is already connected
+            class AlreadyConnected < ArgumentError; end
+
             # Returns the process server object named +name+
             #
             # @param [String] name the process server name
-            # @raise [ArgumentError] if no such process server exists
+            # @raise [UnknownProcessServer] if no such process server exists
             # @return [ProcessServerConfig]
             def process_server_config_for(name)
                 config = process_servers[name]
                 if config then config
                 else
-                    raise ArgumentError, "there is no registered process server called #{name}"
+                    raise UnknownProcessServer, "there is no registered process server called #{name}"
                 end
             end
 
@@ -417,9 +435,9 @@ module Syskit
             #
             # @return [Orocos::ProcessClient,Orocos::Generation::Project]
             #
-            # @raise [ArgumentError] if host is not 'localhost' and
+            # @raise [LocalOnlyConfiguration] if host is not 'localhost' and
             #   {#local_only?} is set
-            # @raise [ArgumentError] if there is already a process server
+            # @raise [AlreadyConnected] if there is already a process server
             #   registered with that name
             def connect_to_orocos_process_server(
                 name, host, port: Orocos::RemoteProcesses::DEFAULT_PORT,
@@ -441,9 +459,9 @@ module Syskit
                 end
 
                 if local_only? && host != 'localhost'
-                    raise ArgumentError, "in local only mode"
+                    raise LocalOnlyConfiguration, "in local only mode, one can only connect to process servers on 'localhost' (got #{host})"
                 elsif process_servers[name]
-                    raise ArgumentError, "we are already connected to a process server called #{name}"
+                    raise AlreadyConnected, "we are already connected to a process server called #{name}"
                 end
 
                 if host =~ /^(.*):(\d+)$/

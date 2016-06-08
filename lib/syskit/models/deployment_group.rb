@@ -168,7 +168,10 @@ module Syskit
             end
 
             # Declare deployed versions of some Ruby tasks
-            def use_ruby_tasks(mappings, on: 'ruby_tasks')
+            def use_ruby_tasks(mappings, on: 'ruby_tasks', process_managers: Syskit.conf)
+                # Verify that the process manager exists
+                process_managers.process_server_config_for(on)
+
                 mappings.map do |task_model, name|
                     deployment_model = task_model.deployment_model
                     configured_deployment = Models::ConfiguredDeployment.
@@ -180,7 +183,10 @@ module Syskit
 
             # Declare tasks that are going to be started by some other process,
             # but whose tasks are going to be integrated in the syskit network
-            def use_unmanaged_task(mappings, on: 'unmanaged_tasks')
+            def use_unmanaged_task(mappings, on: 'unmanaged_tasks', process_managers: Syskit.conf)
+                # Verify that the process manager exists
+                process_managers.process_server_config_for(on)
+
                 mappings.map do |task_model, name|
                     orogen_model = task_model.orogen_model
                     deployment_model = Syskit::Deployment.new_submodel(name: "Deployment::Unmanaged::#{name}") do

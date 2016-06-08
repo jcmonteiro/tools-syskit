@@ -201,12 +201,15 @@ module Syskit
             end
 
             describe "#use_ruby_tasks" do
-                it "registers a configured deployment using the task model's #deployment_model call" do
-                    deployment_m = Syskit::Deployment.new_submodel
-                    task_m = Syskit::RubyTaskContext.new_submodel
+                attr_reader :deployment_m, :task_m
+                before do
+                    @deployment_m = Syskit::Deployment.new_submodel
+                    @task_m = Syskit::RubyTaskContext.new_submodel
                     flexmock(task_m).should_receive(:deployment_model).with('test').
                         and_return(deployment_m)
+                end
 
+                it "registers a configured deployment using the task model's #deployment_model call" do
                     expected = ConfiguredDeployment.new(
                         'test-mng', deployment_m, Hash['test' => 'test'],
                         'test', Hash.new)
@@ -215,12 +218,20 @@ module Syskit
                     configured_deployment = group.use_ruby_tasks(Hash[task_m => 'test'], on: 'test-mng', process_managers: conf)
                     assert_equal [expected], configured_deployment
                 end
+                it "raises if the process manager does not exist" do
+                    assert_raises(RobyApp::Configuration::UnknownProcessServer) do
+                        group.use_ruby_tasks(Hash[task_m => 'test'], on: 'does_not_exist')
+                    end
+                end
             end
 
             describe "#use_unmanaged_task" do
-                it "creates a deployment model and registers it" do
-                    task_m = Syskit::RubyTaskContext.new_submodel(name: 'Test')
+                attr_reader :task_m
+                before do
+                    @task_m = Syskit::RubyTaskContext.new_submodel(name: 'Test')
+                end
 
+                it "creates a deployment model and registers it" do
                     expected = lambda do |configured_deployment|
                         assert_equal 'test-mng', configured_deployment.process_server_name
                         assert_equal 'test', configured_deployment.process_name
@@ -237,6 +248,12 @@ module Syskit
                         first
 
                     assert_equal 'test-mng', configured_deployment.process_server_name
+                end
+
+                it "raises if the process manager does not exist" do
+                    assert_raises(RobyApp::Configuration::UnknownProcessServer) do
+                        group.use_unmanaged_task(Hash[task_m => 'test'], on: 'does_not_exist')
+                    end
                 end
             end
 
