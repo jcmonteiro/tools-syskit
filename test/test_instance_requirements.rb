@@ -561,5 +561,11 @@ describe Syskit::InstanceRequirements do
             ir.each_child.to_a
         end
     end
+
+    describe "droby marshalling" do
+        it "should be able to be marshalled and unmarshalled" do
+            assert_droby_compatible(Syskit::InstanceRequirements.new)
+        end
+    end
 end
 

@@ -14,27 +14,9 @@ module Syskit
             # it provides
             attr_reader :deployments
 
-            # An object that gives access to the process managers and to various
-            # deployment-related configuration such as default prefixes
-            #
-            # Currently an instance of {RobyApp::Configuration}, usually
-            # Syskit.conf
-            attr_reader :conf
-
-            # An object that allows to load deployment models
-            #
-            # Usually Roby.app.default_loader
-            attr_reader :loader
-
-            # Whether we use stub deployments ('simulation') or real ones
-            attr_predicate :simulation?, true
-
-            def initialize(conf: Syskit.conf, loader: Roby.app.default_loader, simulation: Roby.app.simulation?)
-                @conf = conf
-                @loader = loader
+            def initialize
                 @deployed_tasks = Hash.new
                 @deployments = Hash.new
-                @simulation = simulation
                 invalidate_caches
             end
 
@@ -83,7 +65,7 @@ module Syskit
             # Returns a deployment group that represents a single deployed task
             def find_deployed_task_by_name(task_name)
                 if configured_deployment = find_deployed_task_by_name(task_name)
-                    result = new(conf: conf, loader: loader, simulation: simulation)
+                    result = new
                     result.register_deployed_task(task_name, configured_deployment)
                     result
                 end
@@ -220,7 +202,7 @@ module Syskit
             #   server on which this deployment should be started
             #
             # @return [Array<Deployment>]
-            def use_deployment(*names, on: 'localhost', loader: self.loader, **run_options)
+            def use_deployment(*names, on: 'localhost', simulation: Roby.app.simulation?, loader: Roby.app.default_loader, process_managers: Syskit.conf, **run_options)
                 deployment_spec = Hash.new
                 if names.last.kind_of?(Hash)
                     deployment_spec = names.pop
@@ -228,10 +210,10 @@ module Syskit
 
                 process_server_name = on
                 process_server_config =
-                    if simulation?
-                        conf.sim_process_server(process_server_name)
+                    if simulation
+                        process_managers.sim_process_server_config_for(process_server_name)
                     else
-                        conf.process_server_config_for(process_server_name)
+                        process_managers.process_server_config_for(process_server_name)
                     end
 
                 deployments_by_name = Hash.new
@@ -257,7 +239,7 @@ module Syskit
                         orogen_model = loader.deployment_model_from_name(deployment_name)
                         model = Syskit::Deployment.find_model_by_orogen(orogen_model)
                     end
-                    model.default_run_options.merge!(conf.default_run_options(model))
+                    model.default_run_options.merge!(process_managers.default_run_options(model))
 
                     configured_deployment = Models::ConfiguredDeployment.
                         new(process_server_config.name, model, mappings, name, spawn_options)
@@ -273,7 +255,7 @@ module Syskit
             #   project should be loaded from
             # @return [Array<Model<Deployment>>] the set of deployments
             # @see #use_deployment
-            def use_deployments_from(project_name, loader: self.loader, **use_options)
+            def use_deployments_from(project_name, process_managers: Syskit.conf, loader: Roby.app.default_loader, **use_options)
                 Syskit.info "using deployments from #{project_name}"
                 orogen = loader.project_model_from_name(project_name)
 
@@ -281,7 +263,7 @@ module Syskit
                 orogen.each_deployment do |deployment_def|
                     if deployment_def.install?
                         Syskit.info "  #{deployment_def.name}"
-                        result << use_deployment(deployment_def.name, loader: loader, **use_options)
+                        result << use_deployment(deployment_def.name, process_managers: process_managers, loader: loader, **use_options)
                     end
                 end
                 result
