@@ -72,7 +72,7 @@ module Syskit
             end
 
             def initialize(models = [])
-                @base_model = Syskit.proxy_task_model_for(models)
+                @base_model = Models::Placeholder.for(models)
                 @model = base_model
                 @arguments = Hash.new
                 @selections = DependencyInjection.new
@@ -124,7 +124,7 @@ module Syskit
             # Add new models to the set of required ones
             def add_models(new_models)
                 invalidate_template
-                @base_model = base_model.merge(Syskit.proxy_task_model_for(new_models))
+                @base_model = base_model.merge(Models::Placeholder.for(new_models))
                 narrow_model
             end
 
@@ -178,8 +178,8 @@ module Syskit
             # @return [Model<Component>]
             def component_model
                 model = self.model.to_component_model
-                if model.respond_to?(:proxied_task_context_model)
-                    return model.proxied_task_context_model
+                if model.placeholder?
+                    return model.proxied_component_model
                 else return model
                 end
             end
@@ -196,8 +196,8 @@ module Syskit
             def service
                 if model.kind_of?(Models::BoundDataService)
                     model
-                elsif model.respond_to?(:proxied_data_services)
-                    ds = model.proxied_data_services
+                elsif model.placeholder?
+                    ds = model.proxied_data_service_models
                     if ds.size == 1
                         return model.find_data_service_from_type(ds.first)
                     end
@@ -224,7 +224,7 @@ module Syskit
                 if !model.to_component_model.fullfills?(service.component_model)
                     raise ArgumentError, "#{service} is not a service of #{self}"
                 end
-                if service.component_model.respond_to?(:proxied_data_services)
+                if service.component_model.placeholder?
                     if srv = base_model.find_data_service_from_type(service.model)
                         @base_model = srv
                         @model = srv.attach(model)
@@ -309,7 +309,7 @@ module Syskit
                     result
                 else
                     models = Array(models) if !models.respond_to?(:each)
-                    Models::FacetedAccess.new(self, Syskit.proxy_task_model_for(models))
+                    Models::FacetedAccess.new(self, Models::Placeholder.for(models))
                 end
             end
 
@@ -755,7 +755,7 @@ module Syskit
             # Returns the taks model that should be used to represent the result
             # of the deployment of this requirement in a plan
             # @return [Model<Roby::Task>]
-            def proxy_task_model
+            def placeholder_model
                 model.to_component_model
             end
 
@@ -784,7 +784,7 @@ module Syskit
                     # required to avoid recursively reusing names (which was once
                     # upon a time, and is a very confusing feature)
                     barrier = Syskit::DependencyInjection.new
-                    barrier.add_mask(self.proxy_task_model.dependency_injection_names)
+                    barrier.add_mask(self.placeholder_model.dependency_injection_names)
                     context.push(barrier)
                     context.push(pushed_selections)
                     context.push(selections)
@@ -815,7 +815,7 @@ module Syskit
                     return instanciate_from_template(plan)
                 end
 
-                task_model = self.proxy_task_model
+                task_model = self.placeholder_model
 
                 context.save
                 context.push(resolved_dependency_injection)
@@ -974,8 +974,8 @@ module Syskit
 
             # Tests if these requirements explicitly point to a component model
             def component_model?
-                if model.respond_to?(:proxied_task_context_model)
-                    model.proxied_task_context_model
+                if model.placeholder?
+                    model.proxied_component_model != Syskit::Component
                 else true
                 end
             end
@@ -1010,7 +1010,7 @@ module Syskit
             end
 
             def to_coordination_task(task_model)
-                Roby::Coordination::Models::TaskFromAsPlan.new(self, proxy_task_model)
+                Roby::Coordination::Models::TaskFromAsPlan.new(self, placeholder_model)
             end
 
             def selected_for(requirements)

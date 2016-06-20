@@ -126,7 +126,7 @@ module Syskit
             end
 
             def to_s
-                "#{object.to_s}.as(#{required.each_required_model.map(&:name).sort.join(",")})"
+                "#{object.to_s}.as(#{required.each_required_model.map(&:to_s).sort.join(",")})"
             end
 
             def method_missing(m, *args, &block)

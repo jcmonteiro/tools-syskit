@@ -46,15 +46,11 @@ module Syskit
                 end
             end
 
-            module Tag
-                include Syskit::PlaceholderTask
-
-                module ClassExtension
-                    # The name of this tag
-                    attr_accessor :tag_name
-                    # The profile this tag has been defined on
-                    attr_accessor :profile
-                end
+            Tag = Syskit::Models::Placeholder.new_specialized_placeholder do
+                # The name of this tag
+                attr_accessor :tag_name
+                # The profile this tag has been defined on
+                attr_accessor :profile
             end
 
             # Whether this profile should be kept across app setup/cleanup
@@ -151,9 +147,8 @@ module Syskit
             end
 
             def tag(name, *models)
-                tags[name] = Syskit.create_proxy_task_model_for(
+                tags[name] = Tag.create_for(
                     models,
-                    extension: Tag,
                     as: "#{self}.#{name}_tag")
                 tags[name].tag_name = name
                 tags[name].profile = self

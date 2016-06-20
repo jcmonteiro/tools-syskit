@@ -534,9 +534,9 @@ module Syskit
                 # Component.clear_model. The main reason is that we need to
                 # clear them on every component model class,
                 # including the models that are markes as permanent
-                Syskit::Component.proxy_task_models.clear
+                Syskit::Component.placeholder_models.clear
                 Syskit::Component.each_submodel do |sub|
-                    sub.proxy_task_models.clear
+                    sub.placeholder_models.clear
                 end
             end
 

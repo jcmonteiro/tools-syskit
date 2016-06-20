@@ -254,7 +254,7 @@ module Syskit
                     Syskit::BoundDataService.new(task, self)
                 elsif task.fullfills?(component_model)
                     # Fullfills, but does not inherit ? component_model is a data service proxies
-                    if !component_model.placeholder_task?
+                    if !component_model.placeholder?
                         raise InternalError, "#{component_model} was expected to be a placeholder task, but is not"
                     end
                     base_model = component_model.superclass

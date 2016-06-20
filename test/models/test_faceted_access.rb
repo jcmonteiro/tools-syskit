@@ -14,7 +14,7 @@ describe Syskit::Models::FacetedAccess do
         end
         sub_task_m.provides srv_m, as: 'test'
 
-        @facet = Syskit::Models::FacetedAccess.new(sub_task_m, Syskit.proxy_task_model_for([task_m, srv_m]))
+        @facet = Syskit::Models::FacetedAccess.new(sub_task_m, Syskit::Models::Placeholder.for([task_m, srv_m]))
     end
 
     describe "#find_ports_on_required" do
@@ -42,7 +42,7 @@ describe Syskit::Models::FacetedAccess do
                 output_port 'd', '/double'
             end
             sub_task_m.provides srv1_m, as: 'test1'
-            facet = Syskit::Models::FacetedAccess.new(sub_task_m, Syskit.proxy_task_model_for([srv1_m, srv_m]))
+            facet = Syskit::Models::FacetedAccess.new(sub_task_m, Syskit::Models::Placeholder.for([srv1_m, srv_m]))
             assert_equal [sub_task_m.sd_port].to_set,
                 facet.find_all_port_mappings_for('d')
         end
@@ -51,7 +51,7 @@ describe Syskit::Models::FacetedAccess do
                 output_port 'd', '/int'
             end
             sub_task_m.provides srv1_m, as: 'test1'
-            facet = Syskit::Models::FacetedAccess.new(sub_task_m, Syskit.proxy_task_model_for([srv1_m, srv_m]))
+            facet = Syskit::Models::FacetedAccess.new(sub_task_m, Syskit::Models::Placeholder.for([srv1_m, srv_m]))
             assert_equal [sub_task_m.sd_port, sub_task_m.i_port].to_set,
                 facet.find_all_port_mappings_for('d')
         end
@@ -73,7 +73,7 @@ describe Syskit::Models::FacetedAccess do
                 output_port 'd', '/double'
             end
             sub_task_m.provides srv1_m, as: 'test1'
-            facet = Syskit::Models::FacetedAccess.new(sub_task_m, Syskit.proxy_task_model_for([srv1_m, srv_m]))
+            facet = Syskit::Models::FacetedAccess.new(sub_task_m, Syskit::Models::Placeholder.for([srv1_m, srv_m]))
 
             p = facet.find_port('d')
             assert 'd', p.name
@@ -85,7 +85,7 @@ describe Syskit::Models::FacetedAccess do
                 output_port 'd', '/int'
             end
             sub_task_m.provides srv1_m, as: 'test1'
-            facet = Syskit::Models::FacetedAccess.new(sub_task_m, Syskit.proxy_task_model_for([srv1_m, srv_m]))
+            facet = Syskit::Models::FacetedAccess.new(sub_task_m, Syskit::Models::Placeholder.for([srv1_m, srv_m]))
             assert_raises(Syskit::AmbiguousPortOnCompositeModel) do
                 facet.find_port('d')
             end
@@ -107,7 +107,7 @@ describe Syskit::Models::FacetedAccess do
                 output_port 'd', '/double'
             end
             sub_task_m.provides srv1_m, as: 'test1'
-            facet = Syskit::Models::FacetedAccess.new(sub_task_m, Syskit.proxy_task_model_for([srv1_m, srv_m]))
+            facet = Syskit::Models::FacetedAccess.new(sub_task_m, Syskit::Models::Placeholder.for([srv1_m, srv_m]))
             assert_equal sub_task_m.sd_port, facet.find_port('d').to_component_port
         end
     end

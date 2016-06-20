@@ -11,7 +11,7 @@ module Syskit
             def initialize(action_interface_model, requirements, doc = nil)
                 super(action_interface_model, doc)
                 @requirements = requirements
-                returns(requirements.proxy_task_model)
+                returns(requirements.placeholder_model)
             end
 
             # @return [Action] an action instance based on this model

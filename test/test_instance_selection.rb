@@ -91,7 +91,7 @@ describe Syskit::InstanceSelection do
         it "merges the port mappings from all selected services" do
             srv1_m = Syskit::DataService.new_submodel { output_port 'out1', '/double' }
             srv2_m = Syskit::DataService.new_submodel { output_port 'out2', '/int' }
-            proxy_task_m = Syskit::Component.proxy_task_model([srv1_m, srv2_m])
+            proxy_task_m = Syskit::Models::Placeholder.for([srv1_m, srv2_m])
             task_m = Syskit::TaskContext.new_submodel do
                 output_port 'task_out1', '/double'
                 output_port 'task_out2', '/int'
@@ -104,7 +104,7 @@ describe Syskit::InstanceSelection do
         it "detects colliding mappings and raises AmbiguousPortMappings" do
             srv1_m = Syskit::DataService.new_submodel { output_port 'out', '/double' }
             srv2_m = Syskit::DataService.new_submodel { output_port 'out', '/int' }
-            proxy_task_m = Syskit::Component.proxy_task_model([srv1_m, srv2_m])
+            proxy_task_m = Syskit::Models::Placeholder.for([srv1_m, srv2_m])
             task_m = Syskit::TaskContext.new_submodel do
                 output_port 'task_out1', '/double'
                 output_port 'task_out2', '/int'
@@ -118,7 +118,7 @@ describe Syskit::InstanceSelection do
         it "ignores colliding but identical mappings" do
             srv1_m = Syskit::DataService.new_submodel { output_port 'out', '/double' }
             srv2_m = Syskit::DataService.new_submodel { output_port 'out', '/double' }
-            proxy_task_m = Syskit::Component.proxy_task_model([srv1_m, srv2_m])
+            proxy_task_m = Syskit::Models::Placeholder.for([srv1_m, srv2_m])
             task_m = Syskit::TaskContext.new_submodel do
                 output_port 'task_out', '/double'
             end
