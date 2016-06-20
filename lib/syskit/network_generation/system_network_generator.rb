@@ -168,7 +168,7 @@ module Syskit
                 log_timepoint 'merge'
 
                 # Now remove the optional, non-resolved children of compositions
-                plan.find_local_tasks(Syskit::Component).abstract.each do |task|
+                plan.find_local_tasks(Syskit::DataService).abstract.each do |task|
                     parent_tasks = task.each_parent_task.to_a
                     parent_tasks.each do |parent_task|
                         next if !parent_task.kind_of?(Syskit::Composition)
