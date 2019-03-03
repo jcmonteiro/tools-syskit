@@ -311,19 +311,23 @@ module Syskit
             end
 
             def update_tasks_info
-                if current_job
-                    job_task = syskit_log_stream.plan.find_tasks(Roby::Interface::Job).
-                        with_arguments(job_id: current_job.job_id).
-                        first
-                    return if !job_task
-                    placeholder_task = job_task.planned_task
-                    return if !placeholder_task
+                if (syskit_log_stream)
+                    if current_job
+                        job_task = syskit_log_stream.plan.find_tasks(Roby::Interface::Job).
+                            with_arguments(job_id: current_job.job_id).
+                            first
+                        return if !job_task
+                        placeholder_task = job_task.planned_task
+                        return if !placeholder_task
 
-                    dependency = placeholder_task.relation_graph_for(Roby::TaskStructure::Dependency)
-                    tasks = dependency.enum_for(:depth_first_visit, placeholder_task).to_a
-                    tasks << job_task
+                        dependency = placeholder_task.relation_graph_for(Roby::TaskStructure::Dependency)
+                        tasks = dependency.enum_for(:depth_first_visit, placeholder_task).to_a
+                        tasks << job_task
+                    else
+                        tasks = syskit_log_stream.plan.tasks
+                    end
                 else
-                    tasks = syskit_log_stream.plan.tasks
+                    tasks = []
                 end
 
                 if hide_loggers?
